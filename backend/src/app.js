@@ -9,4 +9,8 @@ app.get("/health", (req, res) => {
     res.json({status: "UP"});
 });
 
+app.get("/status-check", (req, res) => {
+    res.json({status: "server is up"});
+});
+
 module.exports = app;
