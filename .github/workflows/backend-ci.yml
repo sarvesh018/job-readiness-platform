@@ -1,15 +1,12 @@
-name: Backend CI - Code Quality
+name: Backend Code Quality - SonarQube
 
 on:
   push:
-    paths:
-      - "backend/**"
+    branches: [ main ]
   pull_request:
-    paths:
-      - "backend/**"
 
 jobs:
-  lint:
+  sonarqube:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,13 +17,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: "npm"
-          cache-dependency-path: backend/package-lock.json
-
+          
       - name: Install dependencies
         working-directory: backend
         run: npm ci
 
-      - name: Run ESLint
-        working-directory: backend
-        run: npm run lint
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://localhost:9000
