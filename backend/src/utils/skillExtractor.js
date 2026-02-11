@@ -7,4 +7,3 @@ function extractSkills(text = ""){
 }
 
 module.exports = extractSkills;
-// added comment
