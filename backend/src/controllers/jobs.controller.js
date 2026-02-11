@@ -12,7 +12,6 @@ exports.searchJobs = (req, res) => {
   const results = jobs.map(job => {
     const requiredSkills = extractSkills(job.description);
     const matchResult = matchSkills(userSkills, requiredSkills);
-
     return {
       jobId: job.id,
       title: job.title,
