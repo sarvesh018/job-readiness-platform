@@ -1,6 +1,7 @@
 const fetchJobs = require("../services/jobFetcher.service");
 const extractSkills = require("../utils/skillExtractor");
 const matchSkills = require("../services/skillMatcher.service");
+const SavedJob = require('../models/SavedJob.model');
 
 exports.searchJobs = (req, res) => {
   const { skills = [] } = req.body;
@@ -34,3 +35,22 @@ exports.compareJD = (req, res) => {
 
   res.json(result);
 };
+
+exports.saveJob = async (req, res) => {
+  try {
+    const job = await SavedJob.create(req.body);
+    res.status(201).json(job);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to save job" });
+  }
+};
+
+exports.getSavedJobs = async (req, res) => {
+  try {
+    const jobs = await SavedJob.find().sort({ createdAt: -1 });
+    res.json(jobs);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch saved jobs" });
+  }
+};
+
