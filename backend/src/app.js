@@ -4,7 +4,9 @@ const app = express();
 
 const jobRoutes = require('./routes/jobs.routes')
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173"
+}));
 app.use(express.json());
 
 app.use("/api/jobs", jobRoutes);
