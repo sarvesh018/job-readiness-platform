@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -10,13 +9,24 @@ import {
 } from "@mui/material";
 import { searchJobs } from "../services/jobService";
 import JobCard from "../components/JobCard";
+import { useAppContext } from "../context/AppContext";
 
 function JobSearch() {
-  const [jobs, setJobs] = useState([]);
+  const {
+    searchForm,
+    setSearchForm,
+    searchResults,
+    setSearchResults
+  } = useAppContext();
 
-  useEffect(() => {
-    searchJobs().then(setJobs);
-  }, []);
+  const handleSearch = async () => {
+    const res = await searchJobs({
+      skills: searchForm.skills.split(",").map(s => s.trim()),
+      experience: searchForm.experience,
+      location: searchForm.location
+    });
+    setSearchResults(res);
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 6 }}>
@@ -24,17 +34,15 @@ function JobSearch() {
         Find jobs that match your skills
       </Typography>
 
-      <Typography color="text.secondary" mb={4}>
-        Enter your skills and experience to see how well you match open roles.
-      </Typography>
-
-      {/* Search Form */}
       <Paper elevation={2} sx={{ p: 4, mb: 5 }}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <TextField
               label="Skills"
-              placeholder="Python, Docker, AWS"
+              value={searchForm.skills}
+              onChange={(e) =>
+                setSearchForm({ ...searchForm, skills: e.target.value })
+              }
               fullWidth
             />
           </Grid>
@@ -42,7 +50,10 @@ function JobSearch() {
           <Grid item xs={12} md={4}>
             <TextField
               label="Experience (years)"
-              placeholder="2"
+              value={searchForm.experience}
+              onChange={(e) =>
+                setSearchForm({ ...searchForm, experience: e.target.value })
+              }
               fullWidth
             />
           </Grid>
@@ -50,22 +61,24 @@ function JobSearch() {
           <Grid item xs={12} md={4}>
             <TextField
               label="Location"
-              placeholder="Remote / Bangalore"
+              value={searchForm.location}
+              onChange={(e) =>
+                setSearchForm({ ...searchForm, location: e.target.value })
+              }
               fullWidth
             />
           </Grid>
 
           <Grid item xs={12}>
-            <Button variant="contained" size="large">
+            <Button variant="contained" size="large" onClick={handleSearch}>
               Search Jobs
             </Button>
           </Grid>
         </Grid>
       </Paper>
 
-      {/* Job Results */}
       <Stack spacing={3}>
-        {jobs.map(job => (
+        {searchResults.map(job => (
           <JobCard key={job.jobId} job={job} />
         ))}
       </Stack>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Container,
   Typography,
@@ -8,13 +7,22 @@ import {
   Stack
 } from "@mui/material";
 import { compareJD } from "../services/jobService";
+import { useAppContext } from "../context/AppContext";
 
 function JDCompare() {
-  const [result, setResult] = useState(null);
+  const {
+    compareForm,
+    setCompareForm,
+    compareResult,
+    setCompareResult
+  } = useAppContext();
 
   const handleCompare = async () => {
-    const res = await compareJD();
-    setResult(res);
+    const res = await compareJD({
+      skills: compareForm.skills.split(",").map(s => s.trim()),
+      jdText: compareForm.jdText
+    });
+    setCompareResult(res);
   };
 
   return (
@@ -27,35 +35,37 @@ function JDCompare() {
         <Stack spacing={3}>
           <TextField
             label="Your Skills"
-            placeholder="Python, Docker"
+            value={compareForm.skills}
+            onChange={(e) =>
+              setCompareForm({ ...compareForm, skills: e.target.value })
+            }
             fullWidth
           />
 
           <TextField
             label="Job Description"
-            placeholder="Paste job description here"
+            value={compareForm.jdText}
+            onChange={(e) =>
+              setCompareForm({ ...compareForm, jdText: e.target.value })
+            }
             multiline
             rows={6}
             fullWidth
           />
 
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleCompare}
-          >
+          <Button variant="contained" size="large" onClick={handleCompare}>
             Analyze
           </Button>
         </Stack>
       </Paper>
 
-      {result && (
+      {compareResult && (
         <Paper elevation={1} sx={{ p: 3, mt: 4 }}>
           <Typography variant="h6">
-            Match Score: {result.matchScore}%
+            Match Score: {compareResult.matchScore}%
           </Typography>
           <Typography color="text.secondary">
-            Missing Skills: {result.missingSkills.join(", ")}
+            Missing Skills: {compareResult.missingSkills.join(", ")}
           </Typography>
         </Paper>
       )}

@@ -38,7 +38,21 @@ exports.compareJD = (req, res) => {
 
 exports.saveJob = async (req, res) => {
   try {
-    const job = await SavedJob.create(req.body);
+    const existing = await SavedJob.findOne({ jobId: req.body.jobId });
+
+    if (existing) {
+      return res.status(200).json(existing);
+    }
+
+    const job = await SavedJob.create({
+      jobId: req.body.jobId,
+      title: req.body.title,
+      location: req.body.location,
+      matchScore: req.body.matchScore,
+      requiredSkills: req.body.requiredSkills,
+      matchedSkills: req.body.matchedSkills,
+      missingSkills: req.body.missingSkills
+    });
     res.status(201).json(job);
   } catch (error) {
     res.status(500).json({ message: "Failed to save job" });
@@ -51,6 +65,15 @@ exports.getSavedJobs = async (req, res) => {
     res.json(jobs);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch saved jobs" });
+  }
+};
+
+exports.removeSavedJob = async (req, res) => {
+  try {
+    await SavedJob.deleteOne({ jobId: req.params.jobId });
+    res.json({ message: "Job removed" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to remove job" });
   }
 };
 
