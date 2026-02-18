@@ -13,6 +13,7 @@ function Navbar() {
           <Button color="inherit" component={Link} to="/">Job Search</Button>
           <Button color="inherit" component={Link} to="/compare">JD Compare</Button>
           <Button color="inherit" component={Link} to="/saved">Saved Jobs</Button>
+          <Button color="inherit" component={Link} to="/myprofile">My Profile</Button>
         </Box>
       </Toolbar>
     </AppBar>
